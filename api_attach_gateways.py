@@ -46,7 +46,12 @@ def login(controller_ip, controller_username, controller_password):
     return response
 
 def get_multi_cloud_security_domain_attachment_details(controller_ip, cid, spoke_gateway_name):
-    """This function detaches a spoke from a transit
+    """This function gets the security domain details from a specified attachment.
+
+    Args:
+    controller_ip (str): IP Address of Aviatrix Controller
+    cid (str): Login CID
+    spoke_gateway_name (str): Name of Spoke Gateway, which is the name of the attachment.
     """
 
     url = "https://%s/v1/api" % controller_ip
@@ -62,14 +67,20 @@ def get_multi_cloud_security_domain_attachment_details(controller_ip, cid, spoke
     return response
 
 def associate_attachment_to_multi_cloud_security_domain(controller_ip, cid, spoke_gateway_name, network_domain_name):
-    """This function detaches a spoke from a transit
+    """This associates an attachment to a multi-cloud security domain.
+
+    Args:
+    controller_ip (str): IP Address of Aviatrix Controller
+    cid (str): Login CID
+    spoke_gateway_name (str): Name of Spoke Gateway, which is the name of the attachment.
+    network_domain_name (str): Name of Network Domain
     """
 
     url = "https://%s/v1/api" % controller_ip
 
     payload={
     'CID': cid,
-    'action' : "get_multi_cloud_security_domain_attachment_details",
+    'action' : "associate_attachment_to_multi_cloud_security_domain",
     'attachment_name': spoke_gateway_name,
     'domain_name': network_domain_name
     }
@@ -77,7 +88,6 @@ def associate_attachment_to_multi_cloud_security_domain(controller_ip, cid, spok
     response = request(url, payload, "POST")
     logging.info(response)
     return response
-    return payload
 
 def detach_spoke_from_transit(controller_ip, cid, spoke_gateway_name, transit_gateway_name):
     """This function detaches a spoke from a transit
