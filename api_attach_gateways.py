@@ -58,7 +58,7 @@ def get_multi_cloud_security_domain_attachment_details(controller_ip, cid, spoke
     }
       
     response = request(url, payload, "POST")
-    # logging.info(response)
+    logging.info(response)
     return response
 
 def associate_attachment_to_multi_cloud_security_domain(controller_ip, cid, spoke_gateway_name, network_domain_name):
@@ -74,9 +74,9 @@ def associate_attachment_to_multi_cloud_security_domain(controller_ip, cid, spok
     'domain_name': network_domain_name
     }
       
-    # response = request(url, payload, "POST")
-    # logging.info(response)
-    # return response
+    response = request(url, payload, "POST")
+    logging.info(response)
+    return response
     return payload
 
 def detach_spoke_from_transit(controller_ip, cid, spoke_gateway_name, transit_gateway_name):
