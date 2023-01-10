@@ -45,6 +45,39 @@ def login(controller_ip, controller_username, controller_password):
 
     return response
 
+def get_multi_cloud_security_domain_attachment_details(controller_ip, cid, spoke_gateway_name):
+    """This function detaches a spoke from a transit
+    """
+
+    url = "https://%s/v1/api" % controller_ip
+
+    payload={
+    'CID': cid,
+    'action' : "get_multi_cloud_security_domain_attachment_details",
+    'attachment_name': spoke_gateway_name
+    }
+      
+    response = request(url, payload, "POST")
+    # logging.info(response)
+    return response
+
+def associate_attachment_to_multi_cloud_security_domain(controller_ip, cid, spoke_gateway_name, network_domain_name):
+    """This function detaches a spoke from a transit
+    """
+
+    url = "https://%s/v1/api" % controller_ip
+
+    payload={
+    'CID': cid,
+    'action' : "get_multi_cloud_security_domain_attachment_details",
+    'attachment_name': spoke_gateway_name,
+    'domain_name': network_domain_name
+    }
+      
+    # response = request(url, payload, "POST")
+    # logging.info(response)
+    # return response
+    return payload
 
 def detach_spoke_from_transit(controller_ip, cid, spoke_gateway_name, transit_gateway_name):
     """This function detaches a spoke from a transit
@@ -142,12 +175,19 @@ def main():
 
     login_request = login(controller_ip, controller_username, controller_password)
     cid = login_request["CID"]
-
-    old_transit_gateway = "oldtransitname"
-    new_transit_gateway = "newtransitname"
+    old_transit_gateway = "transit1"
+    new_transit_gateway = "transit2"
     new_spoke_route_table = ""
 
-    spoke_gateway_list = ("spoke1", "spoke2", "spoke3")
+    spoke_gateway_list = ("spoke1", "spoke2", "spoke3", "spoke4", "spoke5")
+
+    #Get the existing network/security domain names from the listed spokes.
+    response_list=[]
+    for individual_gateway in spoke_gateway_list:
+        print("Now GETting network domain for %s attachment" %(individual_gateway))
+        response=get_multi_cloud_security_domain_attachment_details(controller_ip, cid, individual_gateway)
+        response_list.append(response["results"]["domain"])
+    print(response_list)
    
     #Detach the existing spokes from a transit gateway.
     for individual_gateway in spoke_gateway_list:
@@ -159,6 +199,12 @@ def main():
         print("Now attaching %s to %s" %(individual_gateway, new_transit_gateway))
         attach_spoke_to_transit(controller_ip, cid, individual_gateway, new_transit_gateway, new_spoke_route_table)
     
+    #Associate network domain to new attachment.
+    for indivial_gateway, network_domain_name in zip(spoke_gateway_list, response_list):
+        payload=associate_attachment_to_multi_cloud_security_domain(controller_ip, cid, indivial_gateway, network_domain_name)
+        print(payload)
+   
+   
     #Enable inspection for a defined spoke gateway and firenet gateway.
     # for individual_gateway in spoke_gateway_list:
     #     print("Now adding %s to %s inspection policy" %(individual_gateway, new_transit_gateway))
