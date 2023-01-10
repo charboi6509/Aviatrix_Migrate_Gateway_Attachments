@@ -189,7 +189,7 @@ def main():
     new_transit_gateway = "transit2"
     new_spoke_route_table = ""
 
-    spoke_gateway_list = ("spoke1", "spoke2", "spoke3", "spoke4", "spoke5")
+    spoke_gateway_list = ("spoke1", "spoke2", "spoke3")
 
     #Get the existing network/security domain names from the listed spokes.
     response_list=[]
