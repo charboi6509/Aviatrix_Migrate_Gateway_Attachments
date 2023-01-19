@@ -189,7 +189,9 @@ def main():
     new_transit_gateway = "transit2"
     new_spoke_route_table = ""
 
-    spoke_gateway_list = ("spoke1", "spoke2", "spoke3")
+    spoke_gateway_list = ("spoke1", "spoke2")
+    inspection_prefix = "SPOKE:"
+    inspection_gateway_list = (inspection_prefix + x for x in spoke_gateway_list)
 
     #Get the existing network/security domain names from the listed spokes.
     response_list=[]
@@ -210,15 +212,14 @@ def main():
         attach_spoke_to_transit(controller_ip, cid, individual_gateway, new_transit_gateway, new_spoke_route_table)
     
     #Associate network domain to new attachment.
-    for indivial_gateway, network_domain_name in zip(spoke_gateway_list, response_list):
-        payload=associate_attachment_to_multi_cloud_security_domain(controller_ip, cid, indivial_gateway, network_domain_name)
+    for individual_gateway, network_domain_name in zip(spoke_gateway_list, response_list):
+        payload=associate_attachment_to_multi_cloud_security_domain(controller_ip, cid, individual_gateway, network_domain_name)
         print(payload)
    
-   
     #Enable inspection for a defined spoke gateway and firenet gateway.
-    # for individual_gateway in spoke_gateway_list:
-    #     print("Now adding %s to %s inspection policy" %(individual_gateway, new_transit_gateway))
-    #     add_spoke_to_transit_firenet_inspection(controller_ip, cid, individual_gateway, new_transit_gateway)
+    for individual_gateway in inspection_gateway_list:
+        print("Now adding %s to %s inspection policy" %(individual_gateway, new_transit_gateway))
+        add_spoke_to_transit_firenet_inspection(controller_ip, cid, individual_gateway, new_transit_gateway)
 
 
 if __name__ == "__main__":
